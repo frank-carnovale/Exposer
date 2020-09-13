@@ -16,8 +16,6 @@ Health- and readiness- urls are supported; they will always return a simple json
 
 These urls default to '/healthz' and '/readiness' and are configurable in /app/exposer.yml.
 
-To silence logging of these, move logging level to 'info' (recommended), by adding `-m production` to any of the below examples.
-
 ### build image
 
 ```
@@ -55,7 +53,7 @@ docker run -it --rm -p3000:3000 -p3001:3001 -p3002:3002 -e MOJO_LISTEN=$MOJO_LIS
 ### More Options
 
 Exposer is a trivial Mojolicious app ( mojolicious.org ).  More control is possible via
-various other MOJO\_\* environment variables and via other options to the commandline.  See
+various other MOJO\_\* environment variables such as `MOJO_LOG_LEVEL` and via other options to the commandline.  See
 ```
 docker run -it --rm exposer script/exposer help
 ```
