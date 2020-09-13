@@ -24,18 +24,52 @@ To silence logging of these, move logging level to 'info' (recommended), by addi
 ./build.sh
 ```
 
-### run locally (development)
+### defaults
+
+Exposer always responds to all requests with a 200 OK code.
+By default, exposer will bind at port 3000 on all available interfaces, and will log all requests to the container output, at log level 'info'.
+```
+docker run -it --rm -p3000:3000 -v$PWD:/app exposer
+```
+
+### run locally (in service, listen to 3 ports for app, health, and liveness)
 
 ```
+MOJO_LISTEN=http://*:3000,http://*:3001,http://*:3002
+docker run -it --rm -p3000:3000 -p3001:3001 -p3002:3002 -e MOJO_LISTEN=$MOJO_LISTEN exposer
+```
+
+### Kubernetes
+
+Set up a ConfigFile to override /app/exposer.yml to declare health and readiness endpoints.
+
+There's no need to distinguish which ports serve which incoming requests.
+They are all listened to identically, and requests which match 'health' urls are simply responded to but not logged.
+
+
+```
+MOJO_LISTEN=http://*:3000,http://*:3001,http://*:3002
+docker run -it --rm -p3000:3000 -p3001:3001 -p3002:3002 -e MOJO_LISTEN=$MOJO_LISTEN exposer
+```
+
+### More Options
+
+Exposer is a trivial Mojolicious app ( mojolicious.org ).  More control is possible via
+various other MOJO\_\* environment variables and via other options to the commandline.  See
+```
+docker run -it --rm exposer script/exposer help
+```
+or fire up a shell with
+```
+docker run -it --rm exposer /bin/ash -l
+```
+
+### run locally (development mode)
+
+```
+# (clone from GitHub)
 cd exposer
 docker run -it --rm -p3001:3001 -v$PWD:/app exposer morbo script/exposer -l 'http://*:3001'
-```
-
-### run locally (in service, listen to ports for app, health, and liveness)
-
-```
-docker run -it --rm -p3000:3000        -p3001:3001        -p3002:3002 exposer script/exposer \
-       daemon -l 'http://*:3000' -l 'http://*:3001' -l 'http://*:3002'
 ```
 
 ### run self-contained test suite (unit tests)
@@ -47,28 +81,10 @@ docker run -it --rm exposer prove -lvr t
 ### run test suite (integration test)
 
 ```
-# server..
-docker run -it --rm -p3000:3000 exposer script/exposer daemon -l 'http://*:3000'
+# remote server at 'this.deployed.site which forwards internally to exposer at 3000..'
+docker run -it --rm -p3000:3000 exposer
 
-# test suite..
-docker run -it --rm -e TEST_SERVER=https://this.deployed.site:3000 exposer prove -lvr t
-
-```
-
-### deploy live
+# local test suite..
+docker run -it --rm -e TEST_SERVER=https://this.deployed.site exposer prove -lvr t
 
 ```
-docker run -it --rm -p3000:3000        -p3001:3001        -p3002:3002 exposer script/exposer \
-       daemon -l 'http://*:3000' -l 'http://*:3001' -l 'http://*:3002' -m production
-```
-
-### Kubernetes
-
-Set up a ConfigFile to override /app/exposer.yml to declare health and readiness endpoints.
-
-Sample command: `script/exposer daemon -l 'http://*:3000' -l 'http://*:3001' -l 'http://*:3002' -m production`
-
-There's no need to distinguish which ports serve which incoming requests.
-They are all listened to identically, and requests which match 'health' urls are simply responded to but not logged.
-
-

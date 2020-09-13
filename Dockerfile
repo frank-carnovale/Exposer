@@ -2,6 +2,7 @@ FROM alpine:latest
 MAINTAINER Frank Carnovale
 
 ENV EV_EXTRA_DEFS -DEV_NO_ATFORK
+ENV MOJO_LOG_LEVEL info
 
 RUN apk add shadow
 RUN groupadd exposer && useradd -m -g exposer -G wheel exposer
@@ -19,5 +20,5 @@ RUN apk update && \
 
 USER exposer
 WORKDIR /app
-CMD [ "/bin/sh", "-l" ]
+CMD [ "script/exposer", "daemon" ]
 
