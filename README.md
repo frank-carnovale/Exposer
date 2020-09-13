@@ -52,7 +52,7 @@ docker run -it --rm -p3000:3000 -p3001:3001 -p3002:3002 -e MOJO_LISTEN=$MOJO_LIS
 
 ### More Options
 
-Exposer is a trivial Mojolicious app ( mojolicious.org ).  More control is possible via
+Exposer is a simple [Mojolicious](https://mojolicious.org) application.  More control is possible via
 various other MOJO\_\* environment variables such as `MOJO_LOG_LEVEL` and via other options to the commandline.  See
 ```
 docker run -it --rm exposer script/exposer help
@@ -67,7 +67,7 @@ docker run -it --rm exposer /bin/ash -l
 ```
 # (clone from GitHub)
 cd exposer
-docker run -it --rm -p3001:3001 -v$PWD:/app exposer morbo script/exposer -l 'http://*:3001'
+docker run -it --rm -p3000:3000 -v$PWD:/app exposer morbo script/exposer
 ```
 
 ### Run self-contained test suite (unit tests)
