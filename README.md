@@ -27,7 +27,7 @@ These urls default to '/healthz' and '/readiness' and are configurable in /app/e
 Exposer always responds to all requests with a 200 OK code.
 By default, exposer will bind at port 3000 on all available interfaces, and will log all requests to the container output, at log level 'info'.
 ```
-docker run -it --rm -p3000:3000 -v$PWD:/app exposer
+docker run -it --rm -p3000:3000 exposer
 ```
 
 ### Run locally (in service, listen to 3 ports for app, health, and liveness)
@@ -37,18 +37,26 @@ MOJO_LISTEN=http://*:3000,http://*:3001,http://*:3002
 docker run -it --rm -p3000:3000 -p3001:3001 -p3002:3002 -e MOJO_LISTEN=$MOJO_LISTEN exposer
 ```
 
-### Kubernetes
-
-Set up a ConfigFile to override /app/exposer.yml to declare health and readiness endpoints.
-
 There's no need to distinguish which ports serve which incoming requests.
 They are all listened to identically, and requests which match 'health' urls are simply responded to but not logged.
 
+### Kubernetes
+
+Set up a ConfigFile-based volume to override the default /app/exposer.yml, to declare health and readiness endpoints.
+
+Your config file should look something like the following..
+```
+---
+secrets:
+  - 60b150d35c130e72b1261b62683c2b113f7f97c0
+
+health_url: '/healthz'
+ready_url: '/readiness'
 
 ```
-MOJO_LISTEN=http://*:3000,http://*:3001,http://*:3002
-docker run -it --rm -p3000:3000 -p3001:3001 -p3002:3002 -e MOJO_LISTEN=$MOJO_LISTEN exposer
-```
+The 'secrets' list should be present but for this app is not significant.
+
+Ensure that the environment variable `MOJO_LISTEN` is configured to your deployment (see Docker example above).
 
 ### More Options
 
