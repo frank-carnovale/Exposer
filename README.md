@@ -16,13 +16,13 @@ Health- and readiness- urls are supported; they will always return a simple json
 
 These urls default to '/healthz' and '/readiness' and are configurable in /app/exposer.yml.
 
-### build image
+### Build image
 
 ```
 ./build.sh
 ```
 
-### defaults
+### Defaults
 
 Exposer always responds to all requests with a 200 OK code.
 By default, exposer will bind at port 3000 on all available interfaces, and will log all requests to the container output, at log level 'info'.
@@ -30,7 +30,7 @@ By default, exposer will bind at port 3000 on all available interfaces, and will
 docker run -it --rm -p3000:3000 -v$PWD:/app exposer
 ```
 
-### run locally (in service, listen to 3 ports for app, health, and liveness)
+### Run locally (in service, listen to 3 ports for app, health, and liveness)
 
 ```
 MOJO_LISTEN=http://*:3000,http://*:3001,http://*:3002
@@ -62,7 +62,7 @@ or fire up a shell with
 docker run -it --rm exposer /bin/ash -l
 ```
 
-### run locally (development mode)
+### Run locally (development mode)
 
 ```
 # (clone from GitHub)
@@ -70,13 +70,13 @@ cd exposer
 docker run -it --rm -p3001:3001 -v$PWD:/app exposer morbo script/exposer -l 'http://*:3001'
 ```
 
-### run self-contained test suite (unit tests)
+### Run self-contained test suite (unit tests)
 
 ```
 docker run -it --rm exposer prove -lvr t
 ```
 
-### run test suite (integration test)
+### Run test suite (integration test)
 
 ```
 # remote server at 'this.deployed.site which forwards internally to exposer at 3000..'
