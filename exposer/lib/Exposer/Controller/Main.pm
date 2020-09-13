@@ -7,55 +7,49 @@ sub echo ($c) {
     my $req = $c->req;
     my $url = $req->url;
 
-    $log->debug("REQUEST RECIEVED.");
+    $log->info("START REQUEST DETAILS..");
 
-    $log->debug("URL: " . $url->to_string);
+    $log->info("URL: " . $url->to_string);
 
-    my ($call,$params,$body);
+    my ($call,$params,$body,$bundle);
 
     $call->{method} = $req->method;
-    $log->debug("method: " . $call->{method});
+    $log->info("method: " . $call->{method});
 
     if (my $base = $url->base) {
         for my $part (qw/host port scheme/) {
             my $value = $base->$part || next;
             $call->{$part} = $value;
-            $log->debug("$part: " . $value)
+            $log->info("$part: " . $value)
         }
     }
 
     for my $part (qw/scheme userinfo host port path fragment/) {
         my $value = $url->$part || next;
         $call->{$part} = $value;
-        $log->debug("$part: " . $value)
+        $log->info("$part: " . $value)
     }
+    $bundle->{call} = $call;
 
-    if (my $query = $url->query) {
-        $params = $query->to_hash;
-        for my $param (sort keys %$params) {
-            $log->debug("param: $param = " . $params->{$param});
-        }
-        undef $params unless keys %$params;
+    $params = $url->query->to_hash;
+    if (keys %$params) {
+        $log->info("params: " . $c->dumper($params));
+        $bundle->{params} = $params;
     }
 
     my $headers = $req->headers->to_hash;
-    $log->debug("headers: " . $c->dumper($headers));
+    $log->info("headers: " . $c->dumper($headers));
+    $bundle->{headers} = $headers;
 
     if ($body = $req->body) {
-        $log->debug("body follows..");
-        $log->debug("____start_____");
-        $log->debug($body);
-        $log->debug("_____end______");
+        $log->info("__start_body_____");
+        $log->info($body);
+        $log->info("__end___body_____");
+        $bundle->{body} = $body;
     } else {
-        $log->debug("no body");
+        $log->info("no body");
     }
-
-    my $bundle = {
-        call    => $call,
-        headers => $headers
-    };
-    $bundle->{params} = $params if $params;
-    $bundle->{body}   = $body   if $body;
+    $log->info("END REQUEST DETAILS.");
 
     $c->render(json=>$bundle)
 

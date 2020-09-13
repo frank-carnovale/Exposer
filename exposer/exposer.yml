@@ -1,3 +1,7 @@
 ---
 secrets:
   - 60b150d35c130e72b1261b62683c2b113f7f97c0
+
+health_url: '/healthz'
+ready_url: '/readiness'
+

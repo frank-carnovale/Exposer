@@ -10,12 +10,13 @@ sub startup ($self) {
 
   my $r = $self->routes;
 
-  $r->any('/health' => { json=>{result=>'healthy'} });
-  $r->any('/live'   => { json=>{result=>'alive'} });
+  $r->any($config->{health_url} => { json=>{result=>'healthy'} });
+  $r->any($config->{ready_url } => { json=>{result=>'alive'} });
 
   $r->any('/')->to('main#echo');
   $r->any('/*')->to('main#echo');
 
+  $self->log->info('Exposer is ready');
 }
 
 1;
