@@ -8,7 +8,7 @@ Multiple listen-ports can be serviced (see examples below).
 All requests return 200 OK.
 
 This image is therefore useful to deploy as a diagnostic tool in complex micro-container
-environments such as Kubernetes, to allow inspection of incoming requests.
+environments such as Kubernetes, to allow inspection and tracing of incoming requests.
 
 ### Health and Readiness URLS
 
@@ -70,4 +70,5 @@ Sample command: `script/exposer daemon -l 'http://*:3000' -l 'http://*:3001' -l 
 
 There's no need to distinguish which ports serve which incoming requests.
 They are all listened to identically, and requests which match 'health' urls are simply responded to but not logged.
+
 
